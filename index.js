@@ -1,14 +1,16 @@
-const express = require('express')
-const app = express()
-const port = 3000
+const express = require('express');
 const path = require('path');
 
-let publicPath = path.join(__dirname, 'public');
+const app = express();
+const port = 3000;
+
+// Servir archivos estáticos desde el directorio 'public'
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-  res.sendFile(`${publicPath}/index.html`);
-})
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+});
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Servidor escuchando en http://localhost:${port}`);
+});
