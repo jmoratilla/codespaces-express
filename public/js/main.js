@@ -3,7 +3,7 @@ class Example extends Phaser.Scene
     preload ()
     {
         // Background and controls
-        this.load.image('background', 'assets/images/background.png');
+        var background = this.load.image('background', 'assets/images/background.png');
         this.load.image('arrow', 'assets/images/arrow.png');
 
         // Animals
@@ -26,7 +26,7 @@ class Example extends Phaser.Scene
     create ()
     {
         // Place the background image
-        this.background = this.add.sprite(0, 0, 'background');
+        this.background = this.add.sprite(0,0,'background');
         this.background.setOrigin(0,0);
 
         // Group of animals
@@ -50,8 +50,15 @@ class Example extends Phaser.Scene
         }
 
         var animalAnimationConfig = { 
-          key: "",
-          frames: [0,1,2,1,0,1],
+          key: "animalAnimation",
+          frames: [
+            {key:'0', frame: 0},
+            {key:'1', frame: 1},
+            {key:'2', frame: 2},
+            {key:'1', frame: 1},
+            {key:'0', frame: 0},
+            {key:'1', frame: 1},
+          ],
           defaultTextureKey: null,
           startFrame: 3,
           endFrame: null,
@@ -98,35 +105,34 @@ class Example extends Phaser.Scene
           // As we cannot use 'this' inside the forEach function, we use 'self' to refer to the scene
           animal = self.animals.create(-1000, self.worldY, element.key, 0);
           animal.customParams = {text: element.text, sound: element.audio};
-          animal.anims.create(self.animalAnimationConfig); //2024-12-26 - lo dejo aquí.  Sigo mañana
+          animal.anims.create(animalAnimationConfig); 
 
-          animal.inputEnabled = true;
-          animal.input.pixelPerfectClick = true;
-          animal.events.onInputDown.add(self.animateAnimal, self);
+          animal.setInteractive({pixelPerfect: true,});
+          // animal.events.onInputDown.add(self.animateAnimal, self);
         });
 
         // Place first animal in the middle of the screen
-        this.currentAnimal = this.animals.next();
-        this.currentAnimal.position.set(this.game.worldX, this.game.worldY);
+        this.currentAnimal = this.animals.getChildren()[0];
+        console.log(this.currentAnimal);
+        this.currentAnimal.setPosition(this.game.worldX, this.game.worldY);
 
         // Show animal text
         this.showText(this.currentAnimal);
 
         // Controls
-
-        this.rightArrow = this.game.add.sprite(580, this.game.worldY, 'arrow');
+        this.rightArrow = this.add.sprite(580, this.game.worldY, 'arrow');
         this.rightArrow.customParams = {direction: 1};
 
-        this.leftArrow = this.game.add.sprite(60, this.game.worldY, 'arrow');
+        this.leftArrow = this.add.sprite(60, this.game.worldY, 'arrow');
         this.leftArrow.customParams = {direction: -1};
 
         this.rightArrow.inpoutEnabled = true;
-        this.rightArrow.input.pixelPerfectClick = true;
-        this.rightArrow.events.onInputDown.add(this.switchAnimal, this);
+        this.rightArrow.setInteractive({pixelPerfect: true,});
+        // this.rightArrow.events.onInputDown.add(this.switchAnimal, this);
 
         this.leftArrow.inpoutEnabled = true;
-        this.leftArrow.input.pixelPerfectClick = true;
-        this.leftArrow.events.onInputDown.add(this.switchAnimal, this);
+        this.leftArrow.setInteractive({pixelPerfect: true,});
+        // this.leftArrow.events.onInputDown.add(this.switchAnimal, this);
 
     }
 
@@ -184,8 +190,8 @@ class Example extends Phaser.Scene
           align: 'center'
         };
 
-        this.animalText = this.game.add.text(this.game.width/2, this.game.heigh * 0.85, '', style);
-        this.animalText.anchor.setTo(0.5);
+        this.animalText = this.add.text(this.game.width/2, this.game.heigh * 0.85, '', style);
+        
       }
 
       this.animalText.setText(animal.customParams.text);
